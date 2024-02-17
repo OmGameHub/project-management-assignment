@@ -14,7 +14,7 @@ const AppNavBar = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
 
     const items = useMemo(
         () => [
@@ -74,7 +74,9 @@ const AppNavBar = () => {
                     <div>
                         <Dropdown menu={{ items }}>
                             <Space>
-                                <Avatar className="">Om</Avatar>
+                                <Avatar className="uppercase">
+                                    {`${user.firstName[0]}${user.lastName[0]}`}{" "}
+                                </Avatar>
                             </Space>
                         </Dropdown>
                     </div>
