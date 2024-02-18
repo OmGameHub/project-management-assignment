@@ -7,7 +7,7 @@ const AppLayoutContainer = ({ children }) => {
         <Layout.Content className="h-screen w-screen overflow-hidden">
             <AppNavBar />
 
-            {children}
+            <div className="h-[95vh]">{children}</div>
         </Layout.Content>
     );
 };
