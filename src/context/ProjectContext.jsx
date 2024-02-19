@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
     createProjectRequest,
     updateProjectRequest,
+    deleteProjectRequest,
     getProjects,
 } from "../api";
 import Loader from "../components/Loader";
@@ -18,6 +19,7 @@ const ProjectContext = createContext({
     loadMoreProjects: async () => {},
     createProject: async () => {},
     updateProject: async () => {},
+    deleteProject: async () => {},
 });
 
 // Create a hook to access the ProjectContext
@@ -93,6 +95,7 @@ const ProjectProvider = ({ children }) => {
         );
     };
 
+    // Function to handle update project details
     const updateProject = async (data, setIsLoading) => {
         await requestHandler(
             async () => await updateProjectRequest(data),
@@ -105,6 +108,26 @@ const ProjectProvider = ({ children }) => {
                     ...previewProjectMap,
                     [projectId]: data,
                 }));
+            },
+            (errorMsg) => showNotification("error", errorMsg)
+        );
+    };
+
+    // Function to handle delete project
+    const deleteProject = async (projectId, setIsLoading) => {
+        await requestHandler(
+            async () => await deleteProjectRequest(projectId),
+            setIsLoading,
+            (res) => {
+                const { message } = res;
+                setList((prevList) =>
+                    prevList.filter((id) => id !== projectId)
+                );
+                setMetaData((prevMetaData) => ({
+                    ...prevMetaData,
+                    totalProjects: (prevMetaData?.totalProjects ?? 1) - 1,
+                }));
+                showNotification("success", message);
             },
             (errorMsg) => showNotification("error", errorMsg)
         );
@@ -126,6 +149,7 @@ const ProjectProvider = ({ children }) => {
                 loadMoreProjects,
                 createProject,
                 updateProject,
+                deleteProject,
             }}
         >
             {/* Display a loader while loading */}

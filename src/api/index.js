@@ -61,6 +61,10 @@ const updateProjectRequest = (data) => {
     return apiClient.patch(`/projects/${data._id}`, data);
 };
 
+const deleteProjectRequest = (id) => {
+    return apiClient.delete(`/projects/${id}`);
+};
+
 // Export all the API functions
 export {
     loginUser,
@@ -72,5 +76,6 @@ export {
     resetUserPassword,
     createProjectRequest,
     updateProjectRequest,
+    deleteProjectRequest,
     getProjects,
 };
