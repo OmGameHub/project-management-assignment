@@ -10,6 +10,7 @@ const Dashboard = () => {
     const isVisible = useOnScreen(loadMoreRef);
 
     const [showModal, setShowModal] = useState(false);
+    const [projectId, setProjectId] = useState(null);
 
     const { isLoading, list, projectMap, metaData, loadMoreProjects } =
         useProjectContext();
@@ -55,7 +56,11 @@ const Dashboard = () => {
                             return (
                                 <tr
                                     key={projectId}
-                                    className={`border border-b-2 border-gray-800 even:bg-gray-50`}
+                                    className={`border border-b-2 border-gray-800 even:bg-gray-50 cursor-pointer`}
+                                    onClick={() => {
+                                        setProjectId(projectId);
+                                        setShowModal(true);
+                                    }}
                                 >
                                     <td className="w-full max-w-0 whitespace-nowrap px-6 py-3 text-sm font-medium text-gray-900">
                                         {title}
@@ -114,7 +119,11 @@ const Dashboard = () => {
 
             <ProjectModal
                 isOpen={showModal}
-                handleClose={() => setShowModal(false)}
+                projectId={projectId}
+                handleClose={() => {
+                    setShowModal(false);
+                    setProjectId(null);
+                }}
             />
         </div>
     );

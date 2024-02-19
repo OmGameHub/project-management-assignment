@@ -57,6 +57,10 @@ const createProjectRequest = (data) => {
     return apiClient.post("/projects", data);
 };
 
+const updateProjectRequest = (data) => {
+    return apiClient.patch(`/projects/${data._id}`, data);
+};
+
 // Export all the API functions
 export {
     loginUser,
@@ -67,5 +71,6 @@ export {
     forgotPasswordRequest,
     resetUserPassword,
     createProjectRequest,
+    updateProjectRequest,
     getProjects,
 };

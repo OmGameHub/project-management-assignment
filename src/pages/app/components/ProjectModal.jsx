@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button, Input, Modal } from "antd";
 
 import { useProjectContext } from "../../../context/ProjectContext";
+import { showNotification } from "../../../utils";
 
 const ProjectModal = ({ isOpen, projectId = null, handleClose = () => {} }) => {
     const prevProps = useRef();
@@ -11,11 +12,15 @@ const ProjectModal = ({ isOpen, projectId = null, handleClose = () => {} }) => {
         title: "",
         description: "",
     });
-    const { createProject } = useProjectContext();
+    const { createProject, updateProject, projectMap } = useProjectContext();
 
     useEffect(() => {
         if (!isLoading && prevProps.current?.isLoading) {
             handleClose();
+            setData({
+                title: "",
+                description: "",
+            });
         }
 
         return () => {
@@ -24,6 +29,23 @@ const ProjectModal = ({ isOpen, projectId = null, handleClose = () => {} }) => {
             };
         };
     }, [isLoading]);
+
+    useEffect(() => {
+        const project = projectMap[projectId];
+
+        if (project) {
+            setData({
+                _id: project._id,
+                title: project.title,
+                description: project.description,
+            });
+        } else {
+            setData({
+                title: "",
+                description: "",
+            });
+        }
+    }, [projectId]);
 
     const handleChange = (name) => (e) => {
         setData({
@@ -34,7 +56,17 @@ const ProjectModal = ({ isOpen, projectId = null, handleClose = () => {} }) => {
 
     const onSave = async () => {
         if (isLoading) return;
-        await createProject(data, setIsLoading);
+
+        if (Object.values(data).some((val) => !val)) {
+            showNotification("error", "All fields are required");
+            return;
+        }
+
+        if (projectId) {
+            await updateProject(data, setIsLoading);
+        } else {
+            await createProject(data, setIsLoading);
+        }
     };
 
     return (

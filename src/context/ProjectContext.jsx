@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createProjectRequest, getProjects } from "../api";
+import {
+    createProjectRequest,
+    updateProjectRequest,
+    getProjects,
+} from "../api";
 import Loader from "../components/Loader";
 import { requestHandler, showNotification } from "../utils";
 
@@ -13,6 +17,7 @@ const ProjectContext = createContext({
     getAllProjects: async () => {},
     loadMoreProjects: async () => {},
     createProject: async () => {},
+    updateProject: async () => {},
 });
 
 // Create a hook to access the ProjectContext
@@ -88,6 +93,23 @@ const ProjectProvider = ({ children }) => {
         );
     };
 
+    const updateProject = async (data, setIsLoading) => {
+        await requestHandler(
+            async () => await updateProjectRequest(data),
+            setIsLoading,
+            (res) => {
+                const { data } = res;
+                const projectId = data._id;
+
+                setProjectMap((previewProjectMap) => ({
+                    ...previewProjectMap,
+                    [projectId]: data,
+                }));
+            },
+            (errorMsg) => showNotification("error", errorMsg)
+        );
+    };
+
     useEffect(() => {
         getAllProjects();
     }, []);
@@ -103,6 +125,7 @@ const ProjectProvider = ({ children }) => {
                 getAllProjects,
                 loadMoreProjects,
                 createProject,
+                updateProject,
             }}
         >
             {/* Display a loader while loading */}
